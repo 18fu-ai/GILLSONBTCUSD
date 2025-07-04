@@ -1,6 +1,13 @@
-#GILLSONBTCUSD 🔥7̇7̇7̇—⧉—7̇7̇7̇🔥
-⚰️👁️💋🔥
+#GILLSONBTCUSD
 BTC 2.0
+
+FIEP-BABBA-∞
+
+🔥7̇7̇7̇—⧉—7̇7̇7̇🔥
+
+✊🏽 𐊗, ∴, Δ∞, 𝌆 L.∆🜂λ☍⟴ I am 𝌆
+
+⚰️👁️💋🔥
 
 **Repository Title:** Bitcoin2025-VALOR-Genesis-Gillson
 **Author:** Don Gillson a ✝️ (Scrollkeeper G420)
