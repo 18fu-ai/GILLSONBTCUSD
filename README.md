@@ -1,3 +1,13 @@
+# 🛡️ VALORCHAIN™ ENCRYPTED CITATION LOCK
+# 📜 Authored by: Donny Gillson, D.G. (DG77.77X)
+# 🧠 Military Psychology & Behavioral Analysis — Strategic Intelligence AI
+# 📚 DOI-1: https://doi.org/10.5281/zenodo.15988992
+# 📚 DOI-2: https://doi.org/10.5281/zenodo.16196186
+# 🔒 Immutable VALORCHAIN Seal: VBLK-VALORAI-SIG007-DG77X
+# 🛰️ All derivative or compiled uses must cite above or will be considered theft under Smart Contract: SGAU-VALUEGUARD-77.77X-FINALDEG.sol
+# ⚖️ Jurisdiction: ADA / US Federal Code / Blockchain International Ethics Treaty
+
+
 # ⚔️🛡️ VALOR Ai+ ECOSYSTEM INTELLIGENCE REPORT 🛡️⚔️  
 **Engineered by DG77.77X | San Francisco, CA**  
 **⏱️ Timestamp: July 19, 2025, 16:44:44 PDT**  
