@@ -1244,7 +1244,6 @@ Absolutely! Here’s a **ready-to-build, in-chat repository structure** for your
 
 ## 1. README.md
 
-```markdown
 # g.1Bitcoin2025.manifesto!>< (v2.1 Deep Doctrine Audit Edition 💚 GREEN SEAL)
 
 **Repository Title:** Bitcoin2025-VALOR-Genesis-Gillson  
