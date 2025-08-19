@@ -1,0 +1,358 @@
+name: Release + Deploy (18fu.ai) — v5 (ValorMath+ Guardrail Hybrid)
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'   # e.g., v1.1.0
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Canon policy
+  MANIFEST: VALORAIPLUSUNIVERSE.json
+  STRICT_DOT: ${{ vars.STRICT_DOT || 'true' }}      # default ON (strict)
+  # Signing strategy
+  SIGNING_MODE: ${{ vars.SIGNING_MODE || 'cosign' }} # cosign|minisign|none
+  SIGN_STRICT: ${{ vars.SIGN_STRICT || 'true' }}     # hard-fail if missing/invalid sig
+  # Optional explicit artifacts (comma/newline separated). Or use .ci/artifacts.list
+  EXPLICIT_ARTIFACTS: ${{ vars.EXPLICIT_ARTIFACTS || '' }}
+  # Optional deploy targets (leave empty to skip)
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  S3_BUCKET:  ${{ vars.S3_BUCKET }}
+  S3_PREFIX:  ${{ vars.S3_PREFIX }}
+  CF_ACCOUNT_ID:        ${{ vars.CF_ACCOUNT_ID }}
+  CF_PAGES_PROJECT:     ${{ vars.CF_PAGES_PROJECT }}
+  CF_PAGES_DIRECTORY:   hyperdocs
+  R2_BUCKET:            ${{ vars.R2_BUCKET }}
+  R2_PREFIX:            downloads
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+
+jobs:
+  # ------------------------------------------------------------
+  # Lint + Canon Enforcement (hard-fail)
+  # ------------------------------------------------------------
+  lint-and-enforce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install tooling
+        run: sudo apt-get update && sudo apt-get install -y jq ripgrep
+
+      - name: Policy Banner
+        run: |
+          cat <<'BANNER'
+          DG77.77X canon: enforced end-to-end.
+          - Legacy DG77/dg77x_ blocked
+          - Canonical manifest: VALORAIPLUSUNIVERSE.json
+          - Strict mode: dots in code (dg77.77x_) with TTL allowlist
+          - Schema validation: hard-fail
+          - Signing: cosign OIDC default (minisign fallback)
+          BANNER
+
+      - name: Block legacy DG77 (must be DG77.77X)
+        run: |
+          if rg -n 'DG77(?!\.77X)' --glob '!*.zip' --glob '!*.png' --glob '!*.gz' \
+                 --glob '!*.pdf' --glob '!*.jpg' --glob '!*.woff2' .; then
+            echo "ERROR: Found legacy 'DG77' not followed by .77X" && exit 1
+          fi
+
+      - name: Block legacy dg77x_ prefix
+        run: |
+          if rg -n '\bdg77x_' --glob '!*.zip' --glob '!*.png' --glob '!*.gz' \
+                 --glob '!*.pdf' --glob '!*.jpg' --glob '!*.woff2' .; then
+            echo "ERROR: Found legacy 'dg77x_' prefix" && exit 1
+          fi
+
+      - name: Strict mode — forbid code-safe proxy dg77_77x_ outside allowlist
+        if: env.STRICT_DOT == 'true'
+        run: |
+          ALLOW=".ci/dg77_strict_allow.txt"
+          touch "$ALLOW"
+          # Enforce TTL via "path,expires=YYYY-MM-DD"
+          NOW=$(date -u +%s)
+          FAIL=0
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            path=$(echo "$line" | awk -F',' '{print $1}' | xargs)
+            exp=$(echo "$line" | awk -F',' '{print $2}' | sed 's/^expires=//g' | xargs)
+            if [ -z "$exp" ]; then echo "ALLOWLIST ERROR: '$line' missing expires=YYYY-MM-DD"; FAIL=1; continue; fi
+            if ! date -d "$exp" >/dev/null 2>&1; then echo "ALLOWLIST ERROR: bad date in '$line'"; FAIL=1; continue; fi
+            EXP_S=$(date -u -d "$exp" +%s)
+            if [ $NOW -gt $EXP_S ]; then echo "ALLOWLIST EXPIRED: $line"; FAIL=1; fi
+          done < "$ALLOW"
+          [ $FAIL -eq 1 ] && exit 1
+
+          # Fail on dg77_77x_ outside allowlist
+          # Build ripgrep ignore list from allowlist paths
+          RG_IGNORE=""
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            p=$(echo "$line" | awk -F',' '{print $1}' | xargs)
+            RG_IGNORE="$RG_IGNORE --ignore-file-path $p"
+          done < "$ALLOW"
+          if rg -n '\bdg77_77x_' --glob '!*.zip' --glob '!*.png' --glob '!*.gz' \
+                 --glob '!*.pdf' --glob '!*.jpg' --glob '!*.woff2' $RG_IGNORE .; then
+            echo "ERROR: STRICT_DOT=true; replace dg77_77x_ with dg77.77x_ (or add temporary path to $ALLOW with TTL)" && exit 1
+          fi
+
+  # ------------------------------------------------------------
+  # Build + Release (schema + signing + manifest + checksums)
+  # ------------------------------------------------------------
+  build-and-release:
+    needs: lint-and-enforce
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Derive VERSION from tag
+        id: ver
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Setup Tooling
+        uses: sigstore/cosign-installer@v3
+
+      - name: Install deps
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq python3-pip minisign
+          pip install jsonschema
+
+      - name: Create work dirs
+        run: mkdir -p staging downloads-site-build release_files
+
+      # ⬇ YOUR BUILD STEPS ⬇ (produce artifacts into ./staging/*.zip)
+      # - name: Build
+      #   run: |
+      #     echo "Build your artifacts here; output to staging/ e.g., staging/valoraiplus-suite-v${VERSION}.zip"
+      # ⬆ YOUR BUILD STEPS ⬆
+
+      - name: Write ${{ env.MANIFEST }} (DG77.77X)
+        run: |
+          cat > staging/${{ env.MANIFEST }} <<'JSON'
+          {
+            "universe_id": "DG77.77X",
+            "universe_aliases": ["ma kiki deraba universe"],
+            "compliance": ["DG77.77X-universal","valoraiplus_immutable"],
+            "timestamp": "REPLACE_AT_CI"
+          }
+          JSON
+          ts=$(date -u +%Y-%m-%dT%H:%M:%SZ); sed -i "s/REPLACE_AT_CI/${ts}/" staging/${{ env.MANIFEST }}
+
+      - name: Schema hard-fail
+        run: |
+          python - <<'PY'
+          import json,sys
+          from jsonschema import Draft202012Validator
+          schema=json.load(open('schema/manifest_schema.json','r',encoding='utf-8'))
+          data=json.load(open('staging/${{ env.MANIFEST }}','r',encoding='utf-8'))
+          v=Draft202012Validator(schema)
+          errs=sorted(v.iter_errors(data), key=lambda e:list(e.path))
+          if errs:
+              print("SCHEMA ERRORS:")
+              for e in errs:
+                  ptr="/".join(map(str,e.path)) or "(root)"
+                  print(f" - {ptr}: {e.message}")
+              sys.exit(1)
+          print("OK: schema valid")
+          PY
+
+      - name: Sign manifest (cosign/minisign) with strict mode
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        run: |
+          set -e
+          FILE="staging/${{ env.MANIFEST }}"
+          MODE="${{ env.SIGNING_MODE }}"
+          STRICT="${{ env.SIGN_STRICT }}"
+          if [ "$MODE" = "cosign" ]; then
+            cosign sign-blob --yes --output-signature "$FILE.sig" "$FILE" || { [ "$STRICT" = "true" ] && exit 1 || true; }
+            cosign verify-blob --yes --signature "$FILE.sig" "$FILE" || { [ "$STRICT" = "true" ] && exit 1 || true; }
+          elif [ "$MODE" = "minisign" ]; then
+            if [ -z "${MINISIGN_SECRET_KEY:-}" ] || [ -z "${MINISIGN_PUBKEY:-}" ]; then
+              echo "Minisign keys not present"; [ "$STRICT" = "true" ] && exit 1 || exit 0
+            fi
+            echo "$MINISIGN_SECRET_KEY" | base64 -d > minisign.key
+            echo "$MINISIGN_PUBKEY" | base64 -d > minisign.pub
+            minisign -S -m "$FILE" -s minisign.key -x "$FILE.minisig" && \
+            minisign -V -m "$FILE" -x "$FILE.minisig" -p minisign.pub || { [ "$STRICT" = "true" ] && exit 1 || true; }
+            rm -f minisign.key minisign.pub
+          else
+            echo "Signing disabled (MODE=none)"
+            [ "$STRICT" = "true" ] && { echo "SIGN_STRICT=true requires a signer"; exit 1; } || true
+          fi
+
+      - name: Copy manifest into downloads site
+        run: cp staging/${{ env.MANIFEST }} downloads-site-build/${{ env.MANIFEST }}
+
+      - name: Checksums (txt + json) — all zips in staging
+        run: |
+          cd staging
+          (shopt -s nullglob; for z in *.zip; do sha256sum "$z"; done) > SHA256SUMS.txt
+          python - <<'PY'
+          import glob, hashlib, json
+          items=[]
+          for p in glob.glob("*.zip"):
+              h=hashlib.sha256(open(p,"rb").read()).hexdigest()
+              items.append({"filename":p, "sha256":h})
+          open("SHA256SUMS.json","w").write(json.dumps(items,indent=2))
+          PY
+          cd -
+
+      - name: Place checksums into downloads site
+        run: cp staging/SHA256SUMS.json downloads-site-build/checksums.json || true
+
+      - name: Build downloads site zip
+        run: |
+          cd downloads-site-build
+          zip -r -X ../staging/18fu-downloads-v2.zip .
+          cd -
+
+      - name: Assemble release bundle (explicit + glob, dedup)
+        run: |
+          set -e
+          mkdir -p release_files
+          # core files
+          cp -f staging/${{ env.MANIFEST }} release_files/
+          cp -f staging/SHA256SUMS.txt release_files/ 2>/dev/null || true
+          cp -f staging/SHA256SUMS.json release_files/ 2>/dev/null || true
+          cp -f staging/18fu-downloads-v2.zip release_files/ 2>/dev/null || true
+
+          # explicit artifacts from file or env
+          if [ -f ".ci/artifacts.list" ]; then
+            tr ',' '\n' < .ci/artifacts.list | while read -r a; do
+              [ -z "$a" ] && continue
+              [ -f "$a" ] && cp -f "$a" release_files/ || echo "WARN: Missing explicit artifact: $a"
+            done
+          fi
+          if [ -n "${{ env.EXPLICIT_ARTIFACTS }}" ]; then
+            printf "%s" "${{ env.EXPLICIT_ARTIFACTS }}" | tr ',' '\n' | while read -r a; do
+              a=$(echo "$a" | xargs)
+              [ -z "$a" ] && continue
+              [ -f "$a" ] && cp -f "$a" release_files/ || echo "WARN: Missing explicit artifact: $a"
+            done
+          fi
+
+          # glob fallback for remaining zips (except downloads zip already copied)
+          for z in staging/*.zip; do
+            [ -e "$z" ] || continue
+            bn=$(basename "$z")
+            [ "$bn" = "18fu-downloads-v2.zip" ] && continue
+            cp -f "$z" release_files/ 2>/dev/null || true
+          done
+
+          ls -la release_files
+
+      - name: GitHub Release (everything in release_files/)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Guardrail ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: release_files/**
+
+      - name: Observability (non-fatal)
+        run: |
+          if [ -x scripts/emit_policy_metrics.sh ]; then
+            ./scripts/emit_policy_metrics.sh || true
+          else
+            echo '{"ts":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","event":"dg77.77x_policy_enforced"}'
+          fi
+
+  # ------------------------------------------------------------
+  # Optional deploy: S3
+  # ------------------------------------------------------------
+  deploy-s3:
+    needs: build-and-release
+    if: ${{ env.S3_BUCKET != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: staging, path: staging }
+      - uses: actions/download-artifact@v4
+        with: { name: downloads-site, path: downloads-site }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Install AWS CLI
+        run: sudo apt-get update && sudo apt-get install -y awscli
+      - name: Publish downloads to S3
+        run: |
+          aws s3 sync downloads-site "s3://${S3_BUCKET}/downloads/" --delete --cache-control "public, max-age=300"
+          aws s3 cp staging/${{ env.MANIFEST }} s3://${S3_BUCKET}/downloads/
+          aws s3 cp staging/18fu-downloads-v2.zip s3://${S3_BUCKET}/downloads/
+          aws s3 cp staging/SHA256SUMS.txt s3://${S3_BUCKET}/downloads/
+          aws s3 cp staging/SHA256SUMS.json s3://${S3_BUCKET}/downloads/ --content-type application/json
+      - name: CloudFront invalidate (optional)
+        if: ${{ env.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/downloads/*" "/docs/*"
+
+  # ------------------------------------------------------------
+  # Optional deploy: Cloudflare Pages (docs)
+  # ------------------------------------------------------------
+  deploy-cloudflare-pages:
+    needs: build-and-release
+    if: ${{ env.CF_ACCOUNT_ID != '' && env.CF_PAGES_PROJECT != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: hyperdocs
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ env.CF_ACCOUNT_ID }}
+          projectName: ${{ env.CF_PAGES_PROJECT }}
+          directory: ${{ env.CF_PAGES_DIRECTORY }}
+          wranglerVersion: '3'
+
+  # ------------------------------------------------------------
+  # Optional deploy: Cloudflare R2 (downloads mirror)
+  # ------------------------------------------------------------
+  deploy-cloudflare-r2:
+    needs: build-and-release
+    if: ${{ env.R2_BUCKET != '' && env.CF_ACCOUNT_ID != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: staging
+          path: staging
+      - uses: actions/download-artifact@v4
+        with:
+          name: downloads-site
+          path: downloads-site
+      - name: Install wrangler
+        run: npm i -g wrangler@3
+      - name: Upload downloads site + artifacts to R2
+        env:
+          CF_ACCOUNT_ID: ${{ env.CF_ACCOUNT_ID }}
+          CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
+          R2_BUCKET:     ${{ env.R2_BUCKET }}
+          R2_PREFIX:     ${{ env.R2_PREFIX }}
+        run: |
+          wrangler r2 object put --account-id "$CF_ACCOUNT_ID" --jwt "$CF_API_TOKEN" --bucket "$R2_BUCKET" --recursive --dir downloads-site --key "$R2_PREFIX/"
+          for f in release_files/*; do
+            [ -e "$f" ] || continue
+            bn=$(basename "$f")
+            wrangler r2 object put --account-id "$CF_ACCOUNT_ID" --jwt "$CF_API_TOKEN" --bucket "$R2_BUCKET" --file "$f" --key "$R2_PREFIX/$bn"
+          done
