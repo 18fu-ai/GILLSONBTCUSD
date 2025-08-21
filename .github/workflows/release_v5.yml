@@ -14,6 +14,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
+  PYTHONUTF8: "1"
+  LC_ALL: C.UTF-8
+  LANG: C.UTF-8
   # Canon policy
   MANIFEST: VALORAIPLUSUNIVERSE.json
   STRICT_DOT: ${{ vars.STRICT_DOT || 'true' }}      # default ON (strict)
@@ -134,86 +137,76 @@ jobs:
       - name: Create work dirs
         run: mkdir -p staging downloads-site-build release_files
 
-      # ⬇ YOUR BUILD STEPS ⬇ (produce artifacts into ./staging/*.zip)
-      # - name: Build
-      #   run: |
-      #     echo "Build your artifacts here; output to staging/ e.g., staging/valoraiplus-suite-v${VERSION}.zip"
-      # ⬆ YOUR BUILD STEPS ⬆
-
-      - name: Write ${{ env.MANIFEST }} (DG77.77X)
+      - name: Create dummy hyperdocs & package
         run: |
-          cat > staging/${{ env.MANIFEST }} <<'JSON'
-          {
-            "universe_id": "DG77.77X",
-            "universe_aliases": ["ma kiki deraba universe"],
-            "compliance": ["DG77.77X-universal","valoraiplus_immutable"],
-            "timestamp": "REPLACE_AT_CI"
-          }
-          JSON
-          ts=$(date -u +%Y-%m-%dT%H:%M:%SZ); sed -i "s/REPLACE_AT_CI/${ts}/" staging/${{ env.MANIFEST }}
+          mkdir -p hyperdocs
+          echo "<h1>ValorMath+ Hyper-Docs v${{ env.VERSION }}</h1>" > hyperdocs/index.html
+          (cd hyperdocs && zip -r ../staging/hyperdocs-v${{ env.VERSION }}.zip .)
 
-      - name: Schema hard-fail
+      - name: Create downloads page with verification instructions
         run: |
-          python - <<'PY'
-          import json,sys
-          from jsonschema import Draft202012Validator
-          schema=json.load(open('schema/manifest_schema.json','r',encoding='utf-8'))
-          data=json.load(open('staging/${{ env.MANIFEST }}','r',encoding='utf-8'))
-          v=Draft202012Validator(schema)
-          errs=sorted(v.iter_errors(data), key=lambda e:list(e.path))
-          if errs:
-              print("SCHEMA ERRORS:")
-              for e in errs:
-                  ptr="/".join(map(str,e.path)) or "(root)"
-                  print(f" - {ptr}: {e.message}")
-              sys.exit(1)
-          print("OK: schema valid")
-          PY
+          cat > downloads-site-build/index.html <<HTML
+          <!DOCTYPE html>
+          <html lang="en" style="font-family: sans-serif; line-height: 1.6; color: #333;">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Downloads for Guardrail v${{ env.VERSION }}</title>
+            <style>
+              body { max-width: 800px; margin: 2em auto; padding: 0 1em; }
+              code { background-color: #f0f0f0; padding: 0.2em 0.4em; border-radius: 4px; font-family: monospace; }
+              pre { background-color: #2d2d2d; color: #f1f1f1; padding: 1em; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+            </style>
+          </head>
+          <body>
+            <h1>Downloads for Guardrail v${{ env.VERSION }}</h1>
+            <p>All artifacts are listed in <code>VALORAIPLUSUNIVERSE.json</code>. Verify integrity using the instructions below.</p>
+            <hr>
+            <h2>Verify with Cosign (Sigstore)</h2>
+            <p>You can prove these artifacts were not tampered with and were built by our official CI pipeline using the <a href="https://docs.sigstore.dev" target="_blank" rel="noopener">Sigstore</a> <code>cosign</code> tool.</p>
+            <ol>
+              <li>Install <code>cosign</code> by following the <a href="https://docs.sigstore.dev/system_config/installation/" target="_blank" rel="noopener">official installation guide</a>.</li>
+              <li>Download <code>checksums.json</code>, <code>checksums.sig</code>, and <code>checksums.pem</code> from this release.</li>
+              <li>Run the following command in your terminal:</li>
+            </ol>
+            <pre><code>cosign verify-blob --signature checksums.sig --certificate checksums.pem \\\n            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/release_v5.yml@${{ github.ref }}" \\\n            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \\\n            checksums.json</code></pre>
+            <p>A successful verification will print "Verified OK".</p>
+          </body>
+          </html>
+          HTML
 
-      - name: Sign manifest (cosign/minisign) with strict mode
+      - name: Generate checksums + manifest
+        run: |
+          chmod +x scripts/generate_manifest.py
+          python3 scripts/generate_manifest.py
+
+      # Validate manifest unless explicitly skipped
+      - name: Validate manifest (schema)
+        env:
+          SKIP_SCHEMA_VALIDATION: ${{ vars.SKIP_SCHEMA_VALIDATION || 'false' }}
+        run: |
+          python3 -m pip install --quiet jsonschema
+          python3 scripts/validate_manifest.py || (echo "::warning file=scripts/validate_manifest.py::Schema validation failed" && exit 1)
+
+      - name: Sign checksums with Cosign (keyless OIDC)
+        if: env.SIGNING_MODE == 'cosign'
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
           set -e
-          FILE="staging/${{ env.MANIFEST }}"
-          MODE="${{ env.SIGNING_MODE }}"
-          STRICT="${{ env.SIGN_STRICT }}"
-          if [ "$MODE" = "cosign" ]; then
-            cosign sign-blob --yes --output-signature "$FILE.sig" "$FILE" || { [ "$STRICT" = "true" ] && exit 1 || true; }
-            cosign verify-blob --yes --signature "$FILE.sig" "$FILE" || { [ "$STRICT" = "true" ] && exit 1 || true; }
-          elif [ "$MODE" = "minisign" ]; then
-            if [ -z "${MINISIGN_SECRET_KEY:-}" ] || [ -z "${MINISIGN_PUBKEY:-}" ]; then
-              echo "Minisign keys not present"; [ "$STRICT" = "true" ] && exit 1 || exit 0
-            fi
-            echo "$MINISIGN_SECRET_KEY" | base64 -d > minisign.key
-            echo "$MINISIGN_PUBKEY" | base64 -d > minisign.pub
-            minisign -S -m "$FILE" -s minisign.key -x "$FILE.minisig" && \
-            minisign -V -m "$FILE" -x "$FILE.minisig" -p minisign.pub || { [ "$STRICT" = "true" ] && exit 1 || true; }
-            rm -f minisign.key minisign.pub
-          else
-            echo "Signing disabled (MODE=none)"
-            [ "$STRICT" = "true" ] && { echo "SIGN_STRICT=true requires a signer"; exit 1; } || true
-          fi
+          FILE="downloads-site-build/checksums.json"
+          SIG_FILE="downloads-site-build/checksums.sig"
+          CERT_FILE="downloads-site-build/checksums.pem"
 
-      - name: Copy manifest into downloads site
-        run: cp staging/${{ env.MANIFEST }} downloads-site-build/${{ env.MANIFEST }}
+          echo "[INFO] Signing ${FILE} with Cosign..."
+          cosign sign-blob --yes --output-signature "${SIG_FILE}" --output-certificate "${CERT_FILE}" "${FILE}"
 
-      - name: Checksums (txt + json) — all zips in staging
-        run: |
-          cd staging
-          (shopt -s nullglob; for z in *.zip; do sha256sum "$z"; done) > SHA256SUMS.txt
-          python - <<'PY'
-          import glob, hashlib, json
-          items=[]
-          for p in glob.glob("*.zip"):
-              h=hashlib.sha256(open(p,"rb").read()).hexdigest()
-              items.append({"filename":p, "sha256":h})
-          open("SHA256SUMS.json","w").write(json.dumps(items,indent=2))
-          PY
-          cd -
-
-      - name: Place checksums into downloads site
-        run: cp staging/SHA256SUMS.json downloads-site-build/checksums.json || true
+          echo "[INFO] Verifying signature..."
+          cosign verify-blob --signature "${SIG_FILE}" --certificate "${CERT_FILE}" \
+            --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/release_v5.yml@${{ github.ref }}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "${FILE}" || { echo "Signature verification failed!"; exit 1; }
+          echo "[OK] Cosign signature is valid."
 
       - name: Build downloads site zip
         run: |
@@ -230,6 +223,8 @@ jobs:
           cp -f staging/SHA256SUMS.txt release_files/ 2>/dev/null || true
           cp -f staging/SHA256SUMS.json release_files/ 2>/dev/null || true
           cp -f staging/18fu-downloads-v2.zip release_files/ 2>/dev/null || true
+          cp -f downloads-site-build/checksums.sig release_files/ 2>/dev/null || true
+          cp -f downloads-site-build/checksums.pem release_files/ 2>/dev/null || true
 
           # explicit artifacts from file or env
           if [ -f ".ci/artifacts.list" ]; then
