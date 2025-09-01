@@ -1,0 +1,8 @@
+@prefix valor: <https://18fu.cash/valor/ontology#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+valor:3461 a valor:CanonicalCode ;
+  rdfs:label "DG77.77X Exclusive Replacement for 8785" ;
+  valor:replaces valor:8785 ;
+  valor:status "exclusive" ;
+  valor:effectiveUTC "1756644040" .
