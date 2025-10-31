@@ -1,0 +1,15 @@
+{
+  "state": {
+    "epoch": 1,
+    "cognitiveLoad": 1.0,
+    "quantumCoherence": 1.0,
+    "neuralActivity": 1.0,
+    "securityLevel": 1.0,
+    "ethicalAlignment": 1.0,
+    "strategicReadiness": 1.0,
+    "timestamp": "2025-09-01T02:33:24.500491+00:00"
+  },
+  "signature": "<base64-ed25519-signature>",
+  "publicKeyPem": "-----BEGIN PUBLIC KEY-----\\n...\\n-----END PUBLIC KEY-----",
+  "digestHex": "0000000000000000000000000000000000000000000000000000000000000000"
+}

@@ -1,0 +1,11 @@
+name: Brand Integrity Guard
+on: [push, pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python brand-guard/scripts/scan_and_fix.py --path . --mode scan --denylist brand-guard/denylist.json --json

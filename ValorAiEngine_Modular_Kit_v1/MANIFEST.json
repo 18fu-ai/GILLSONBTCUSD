@@ -1,0 +1,62 @@
+{
+  "name": "ValorAiEngine_Modular_Kit",
+  "version": "1.0.0",
+  "created_at": "2025-09-01T02:33:24.508841+00:00",
+  "files": [
+    {
+      "path": "SECURITY.md",
+      "sha256": "4dcad95988121a4cefeb07579a98ce9c278d81ba012de56bd5c7faafaa4daaf9",
+      "bytes": 417
+    },
+    {
+      "path": "LICENSE.txt",
+      "sha256": "6a6c38271643e412a6a367cb60eee3ccf8c9a65ad8b5416a77c594b5230c3192",
+      "bytes": 153
+    },
+    {
+      "path": "engine/ValorAiEngine_Plus_Secure_v1.zip",
+      "sha256": "fddf91540cfbd5c1f9c9b54777f4d54141b5c39deee1c6acd654ba9c462a0193",
+      "bytes": 17986
+    },
+    {
+      "path": "docs/whitepaper.md",
+      "sha256": "c858a5c2784fe9a6bbf9cba91fe54776bc67496b476ba3106ca8dd3360ca0626",
+      "bytes": 4410
+    },
+    {
+      "path": "schemas/attestation.schema.json",
+      "sha256": "b1133e896586133347406ffc160a5c1ee87006f55c00317bb9ef38ed7bb39167",
+      "bytes": 1586
+    },
+    {
+      "path": "schemas/manifest.schema.json",
+      "sha256": "3bde1e883e5fb28b840e87362e2a61647d121fbd00c3eae39303ebfeb8e83253",
+      "bytes": 859
+    },
+    {
+      "path": "examples/attestation_example.json",
+      "sha256": "e691edbd47544becb3032e1b0ba75004ccc0c45116ca8c9900a1339c134f58f8",
+      "bytes": 465
+    },
+    {
+      "path": "examples/integration_guide.md",
+      "sha256": "1f60885cc1a409013056f49ff0ec142d3da5a69e7e1f484b2ff0b1224439659b",
+      "bytes": 475
+    },
+    {
+      "path": "scripts/verify_hashes.py",
+      "sha256": "f277133119aeed47531aac3a16dc3572c9ee7cfd0c0ebfae3f3b7933e1ee114f",
+      "bytes": 855
+    },
+    {
+      "path": "scripts/verify_attestation.py",
+      "sha256": "f55088eedf7c5f4e724f0d9bc53336bda1c2ff9d06d2cfc5a90deb7edfc1f604",
+      "bytes": 1115
+    },
+    {
+      "path": "scripts/generate_manifest.py",
+      "sha256": "6ac17a7c093cb666bd2b5f57da8edf0c37fa087a8fa005cd7007b2eaa4941cfd",
+      "bytes": 1305
+    }
+  ]
+}

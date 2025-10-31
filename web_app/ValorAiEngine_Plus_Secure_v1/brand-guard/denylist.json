@@ -1,0 +1,25 @@
+{
+  "banned": [
+    {
+      "name": "VALLR∞AI∞MATH+ (unicode)",
+      "regex": "(?i)\\bVALLR(?:\\u221e|∞)?\\s*AI(?:\\u221e|∞)?\\s*MATH\\+?\\b",
+      "replacement": "ValorAiMath+"
+    },
+    {
+      "name": "VALLR AI MATH (ASCII fallback)",
+      "regex": "(?i)\\bVALLR\\s*AI\\s*MATH\\+?\\b",
+      "replacement": "ValorAiMath+"
+    },
+    {
+      "name": "VALLR-AI-MATH (symbols/hyphens/underscores)",
+      "regex": "(?i)\\bVALLR[\\s\\-_]*AI[\\s\\-_]*MATH\\+?\\b",
+      "replacement": "ValorAiMath+"
+    },
+    {
+      "name": "VALLR[A-Za-z0-9]*MATH catchall (avoid VALOR)",
+      "regex": "(?i)\\bVALLR[A-Z0-9_\\-\\s]*MATH\\+?\\b",
+      "replacement": "ValorAiMath+"
+    }
+  ],
+  "notes": "Denylist tuned to avoid false positives on VALOR/VALORAIPLUS while banning fraudulent VALLR∞AI∞MATH+ variants."
+}

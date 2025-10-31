@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ValorAiEngine Attestation",
+  "type": "object",
+  "properties": {
+    "state": {
+      "type": "object",
+      "properties": {
+        "epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cognitiveLoad": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "quantumCoherence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "neuralActivity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "securityLevel": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ethicalAlignment": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "strategicReadiness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "epoch",
+        "cognitiveLoad",
+        "quantumCoherence",
+        "neuralActivity",
+        "securityLevel",
+        "ethicalAlignment",
+        "strategicReadiness",
+        "timestamp"
+      ]
+    },
+    "signature": {
+      "type": "string"
+    },
+    "publicKeyPem": {
+      "type": "string"
+    },
+    "digestHex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "state",
+    "signature",
+    "publicKeyPem",
+    "digestHex"
+  ]
+}

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+python "$ROOT/brand-guard/scripts/scan_and_fix.py" --path "$ROOT" --mode scan --denylist "$ROOT/brand-guard/denylist.json" --json || {
+  echo "[BrandGuard] ❌ Fraudulent term detected. Fix with --mode fix."; exit 1; }
+echo "[BrandGuard] ✅ Clean."

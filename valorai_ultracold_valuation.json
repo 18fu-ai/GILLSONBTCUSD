@@ -1,0 +1,21 @@
+{
+    "project_id": "VALORAI_ULTRACOLD_001",
+    "author": "VALORAIPLUS Core Engineering",
+    "date": "2025-10-12",
+    "license": "Sovereign Proprietary - All Rights Reserved under Supreme Galactic Authority",
+    "version": "1.0",
+    "tiers": {
+        "Basic Research": 53991.88444346091,
+        "Advanced Applications": 107983.76888692183,
+        "Commercial Potential": 269959.4222173046,
+        "Strategic Value": 539918.8444346092
+    },
+    "subtotals": [
+        53991.88444346091,
+        107983.76888692183,
+        269959.4222173046,
+        539918.8444346092
+    ],
+    "range_min": 728890.4399867224,
+    "range_max": 1457780.8799734449
+}
