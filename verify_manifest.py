@@ -40,6 +40,10 @@ def main():
 
     ok_all = True
     for expected_hash, fname in entries:
+        # Skip verifying the manifest file itself.
+        if fname == "MANIFEST_SHA256.txt":
+            continue
+
         fp = base / fname
         if not fp.exists():
             print(f"[MISSING] {fname}")
