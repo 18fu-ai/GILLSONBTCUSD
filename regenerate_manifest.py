@@ -16,6 +16,7 @@ CANONICAL_FILES = [
     "Press_OnePager.md",
     "LICENSE_NOTICE.txt",
     "verify_manifest.py",
+    "valoraiplus-v9999efe-fortran.f90",
 ]
 
 def sha256(p: Path) -> str:
