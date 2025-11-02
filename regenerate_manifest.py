@@ -15,6 +15,7 @@ CANONICAL_FILES = [
     "CLAIMS.md",
     "Press_OnePager.md",
     "LICENSE_NOTICE.txt",
+    "The_Valor_Codex_GHOST25.html",
     "verify_manifest.py",
     "valoraiplus-v9999efe-fortran.f90",
     "valor_data_sources.json",
