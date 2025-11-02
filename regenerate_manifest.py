@@ -43,6 +43,13 @@ CANONICAL_FILES = [
     ".gitignore",
     "package.json",
     "tsconfig.json",
+    ".env.example",
+    "hashpack_build.py",
+    "proof_service_main.py",
+    "Dockerfile",
+    "k8s_configmap.yaml",
+    "k8s_deployment.yaml",
+    ".github/workflows/github_workflow.yml",
 ]
 
 def sha256(p: Path) -> str:

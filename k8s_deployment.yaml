@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valoraiplus-proof-deployment
+  namespace: valor-proof
+  labels:
+    app: valoraiplus-proof
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valoraiplus-proof
+  template:
+    metadata:
+      labels:
+        app: valoraiplus-proof
+    spec:
+      containers:
+      - name: proof-service
+        image: valoraiplus_v0_proof:latest # This would be a registry path in production
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: valoraiplus-proof-config
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: proof-svc
+  namespace: valor-proof
+spec:
+  selector:
+    app: valoraiplus-proof
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
