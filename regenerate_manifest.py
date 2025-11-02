@@ -21,7 +21,7 @@ CANONICAL_FILES = [
     "valor_data_sources.json",
     "valor_live_data_workaround.py",
     "bootstrap_codex_ghost25.sh",
-    "deploy/valor-codex-ghost25/.env.production",
+    "deploy/valor-codex-ghost25/.env.example",
     "deploy/valor-codex-ghost25/README.md",
     "deploy/valor-codex-ghost25/anchor-genesis.sh",
     "deploy/valor-codex-ghost25/config/valorcodex.service",
@@ -29,6 +29,18 @@ CANONICAL_FILES = [
     "deploy/valor-codex-ghost25/deployment-manifest.json",
     "deploy/valor-codex-ghost25/docker-compose.yml",
     "deploy/valor-codex-ghost25/scripts/anchor-opreturn-gi5152.sh",
+    "sextillion_finality_v7.py",
+    "src/epic.ts",
+    "src/server.ts",
+    "src/treasury.ts",
+    "src/valoraiplus_azrei_lock.ts",
+    "src/valoraiplus_lawback.ts",
+    "src/valoraiplus_violation_auto.ts",
+    "tools/valoraiplus_evidence.py",
+    "scripts/valoraiplus_ascii_cli.ts",
+    ".gitignore",
+    "package.json",
+    "tsconfig.json",
 ]
 
 def sha256(p: Path) -> str:
