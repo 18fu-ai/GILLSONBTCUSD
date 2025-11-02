@@ -17,6 +17,8 @@ CANONICAL_FILES = [
     "LICENSE_NOTICE.txt",
     "verify_manifest.py",
     "valoraiplus-v9999efe-fortran.f90",
+    "valor_data_sources.json",
+    "valor_live_data_workaround.py",
 ]
 
 def sha256(p: Path) -> str:

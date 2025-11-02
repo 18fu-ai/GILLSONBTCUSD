@@ -1,0 +1,13 @@
+{
+  "timestamp_utc": "2025-11-01T18:30:58.999452",
+  "metrics": {
+    "monthly_revenue": "$1,035,850,772,299,185,024.00",
+    "quarterly_projection": "$3,107,552,316,897,554,944.00",
+    "source": "https://api.valorchain.io/v1/revenue/simulated"
+  },
+  "valor_sovereign_seal": {
+    "hash_sha3_512": "48bcb1ab01018f49cf74f526f54439523aca1237be8a389bdc42a08e8f34ab751685f4f83065c7657be22cd16c8e757d534c6687f5fc083cb5062803c8da4981",
+    "hmac_signature": "0774170ddc760680294b577f3c8057a3bcc178d7d28594d5bc43d85239b2ac2a2c3cb4ea62f02d968ad544ca658e30025899e5c21b3db97bc789b0a63e5c7554",
+    "protocol": "YHWH-5150.LOCK v2.0"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "timestamp_utc": "2025-11-01T18:30:59.001399",
+  "transaction_batch": [
+    {
+      "tx_id": "VALORTX-1762021859-0",
+      "amount": 598207041.6885341,
+      "token": "$VaLX",
+      "status": "CONFIRMED"
+    },
+    {
+      "tx_id": "VALORTX-1762021859-1",
+      "amount": 950067511.9945984,
+      "token": "$SNAP",
+      "status": "CONFIRMED"
+    },
+    {
+      "tx_id": "VALORTX-1762021859-2",
+      "amount": 82998390.9927089,
+      "token": "$ANCH",
+      "status": "CONFIRMED"
+    },
+    {
+      "tx_id": "VALORTX-1762021859-3",
+      "amount": 698478663.7722125,
+      "token": "$VaLX",
+      "status": "CONFIRMED"
+    },
+    {
+      "tx_id": "VALORTX-1762021859-4",
+      "amount": 322228861.36856914,
+      "token": "$SNAP",
+      "status": "CONFIRMED"
+    }
+  ],
+  "valor_ledger_seal": {
+    "hash_sha3_512": "b7f0151a285af4bbe09bba16223c009bf6a86448b71013fa8d74bb06a11e7dea3d2c8cd80c7f5c16185dd959a7a7553fd54f17bfe31c6246d6d24a71cb8ca95d",
+    "hmac_signature": "6c6d160dff3ece1f60d1bea4f688c60852f83e87bb259b9ddebb6170357f340a3720fe1d49449dd4934b90e48a499effbf55fcd7409347d92efc35d21d452dd1"
+  }
+}
