@@ -50,6 +50,11 @@ CANONICAL_FILES = [
     "k8s_configmap.yaml",
     "k8s_deployment.yaml",
     ".github/workflows/github_workflow.yml",
+    ".github/workflows/mint-symbolic-psbt.yml",
+    "data/VDL_v1.44g_manifest.json",
+    "mint_symbolic_payloads.py",
+    "mint_psbt_symbolic.py",
+    "make_qr.py",
 ]
 
 def sha256(p: Path) -> str:
