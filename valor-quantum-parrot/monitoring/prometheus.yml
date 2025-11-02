@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: 'quantum-parrot'
+    static_configs:
+      - targets:
+        - 'quantum-dashboard:80'
+        - 'fortran1969-engine:1969'
+        - 'valorloop-engine:7777'
+        - 'neural-network:9090'
+        - 'intellitrees:6060'
+        - 'token-generator:9999'
+        - 'vector-processor:8889'
+        - 'turing-validator:4242'
+        - 'redis-quantum:6379'
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['quantum-monitor:9090']
