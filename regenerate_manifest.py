@@ -20,6 +20,15 @@ CANONICAL_FILES = [
     "valoraiplus-v9999efe-fortran.f90",
     "valor_data_sources.json",
     "valor_live_data_workaround.py",
+    "bootstrap_codex_ghost25.sh",
+    "deploy/valor-codex-ghost25/.env.production",
+    "deploy/valor-codex-ghost25/README.md",
+    "deploy/valor-codex-ghost25/anchor-genesis.sh",
+    "deploy/valor-codex-ghost25/config/valorcodex.service",
+    "deploy/valor-codex-ghost25/deploy-transcendent.sh",
+    "deploy/valor-codex-ghost25/deployment-manifest.json",
+    "deploy/valor-codex-ghost25/docker-compose.yml",
+    "deploy/valor-codex-ghost25/scripts/anchor-opreturn-gi5152.sh",
 ]
 
 def sha256(p: Path) -> str:

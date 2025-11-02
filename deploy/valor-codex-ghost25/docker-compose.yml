@@ -1,0 +1,150 @@
+version: '3.8'
+
+# VALORAIPLUS® v5152-Ω - TRANSCENDENT DOCKER STACK
+# Commander: DG77.77X-Ξ
+
+services:
+  fortran1969-engine:
+    image: valorai/fortran-quantum-core:1969.g
+    restart: unless-stopped
+    ports:
+      - "1969:1969"
+      - "5150:5150"
+    networks:
+      - backend
+      - data
+    volumes:
+      - ./genesis:/genesis:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '${FORTRAN_CPU_LIMIT:-2}'
+          memory: '${FORTRAN_MEM_LIMIT:-4G}'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1969/genesis"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "${LOG_DRIVER}"
+      options:
+        max-size: "${LOG_MAX_SIZE}"
+        max-file: "${LOG_MAX_FILE}"
+    user: "1000:1000"
+
+  quantum-dashboard:
+    image: valorai/ghost25-dashboard:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    networks:
+      - frontend
+    volumes:
+      - ./certs:/etc/ssl/certs:ro
+    depends_on:
+      - fortran1969-engine
+      - relay-server
+    deploy:
+      resources:
+        limits:
+          cpus: '${DASHBOARD_CPU_LIMIT:-1}'
+          memory: '${DASHBOARD_MEM_LIMIT:-2G}'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    logging: &default-logging
+      driver: "${LOG_DRIVER}"
+      options:
+        max-size: "${LOG_MAX_SIZE}"
+        max-file: "${LOG_MAX_FILE}"
+    user: "1000:1000"
+
+  relay-server:
+    image: valorai/gi5152-relay:latest
+    restart: unless-stopped
+    ports:
+      - "5152:5152"
+    networks:
+      - backend
+    environment:
+      - BITCOIN_RPC_HOST=${BITCOIN_RPC_HOST}
+      - BITCOIN_RPC_PORT=${BITCOIN_RPC_PORT}
+      - BITCOIN_RPC_USER=${BITCOIN_RPC_USER}
+      - BITCOIN_RPC_PASS=${BITCOIN_RPC_PASS}
+    deploy:
+      resources:
+        limits:
+          cpus: '${RELAY_CPU_LIMIT:-0.5}'
+          memory: '${RELAY_MEM_LIMIT:-1G}'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5152/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    logging: *default-logging
+    user: "1000:1000"
+
+  prometheus:
+    image: prom/prometheus:v2.47.2
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging: *default-logging
+    user: "65534:65534"
+
+  grafana:
+    image: grafana/grafana-oss:10.1.5
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+      - frontend
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging: *default-logging
+    user: "472:472"
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+  backend:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+  data:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+  monitoring:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.23.0.0/24

@@ -1,0 +1,16 @@
+[Unit]
+Description=VALOR Codex GHOST25 Transcendent Stack
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/path/to/valor-ai/deploy/valor-codex-ghost25
+ExecStart=/path/to/valor-ai/deploy/valor-codex-ghost25/deploy-transcendent.sh
+ExecStop=/usr/bin/docker-compose down
+User=valoradmin
+Group=docker
+
+[Install]
+WantedBy=multi-user.target
