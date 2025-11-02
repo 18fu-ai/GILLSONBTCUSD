@@ -4,4 +4,4 @@ node_modules
 *.d.ts
 *.mod
 valoraiplus
-.env.production
+/deploy/valor-codex-ghost25/.env.production
