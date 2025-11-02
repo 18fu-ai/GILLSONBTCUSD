@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>$HIVE 144,000D Lattice</title>
+  <style>
+    body { margin: 0; overflow: hidden; background-color: #000; }
+    canvas { display: block; }
+    #info { position: absolute; top: 10px; left: 10px; color: #fff; font-family: Arial; font-size: 14px; z-index: 10; }
+  </style>
+</head>
+<body>
+<div id="info">Hover over nodes to see metadata. Click to expand sub-lattices.</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.156.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.002);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 5000);
+camera.position.set(0, 200, 800);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+
+const NODE_COLORS = {DONNY: 0x00ffe0, JAXX: 0xff00ff, GILLGOLD: 0xffd700, GILLBTC: 0xffa500, GLSN: 0x8a2be2};
+const NODE_METADATA = {
+  DONNY: {description:"Core token: DONNY", children: ["JAXX", "GILLGOLD"]},
+  JAXX: {description:"Core token: JAXX", children: ["GILLBTC"], parent: "DONNY"},
+  GILLGOLD: {description:"Core token: GILLGOLD", children: ["GLSN"], parent: "DONNY"},
+  GILLBTC: {description:"Core token: GILLBTC", parent: "JAXX"},
+  GLSN: {description:"Core token: GLSN", parent: "GILLGOLD"}
+};
+
+const nodes = [];
+const radius = 200;
+let angleStep = (Math.PI * 2) / Object.keys(NODE_COLORS).length;
+let i = 0;
+for (const key in NODE_COLORS) {
+  const geometry = new THREE.SphereGeometry(15, 32, 32);
+  const material = new THREE.MeshStandardMaterial({color:NODE_COLORS[key], emissive:NODE_COLORS[key], emissiveIntensity:0.5});
+  const sphere = new THREE.Mesh(geometry, material);
+  const angle = i * angleStep;
+  sphere.position.set(Math.cos(angle)*radius, Math.sin(angle)*radius*0.5, Math.sin(angle)*radius);
+  sphere.userData = {name:key, ...NODE_METADATA[key]};
+  scene.add(sphere);
+  nodes.push(sphere);
+  i++;
+}
+
+const secondaryNodes = [];
+const lines = new THREE.Group();
+scene.add(lines);
+
+// This part of the original script is replaced by the new logic
+// for (let node of primaryNodes) {
+//   for (let j=0; j<4; j++) {
+//     const geometry = new THREE.SphereGeometry(6, 16, 16);
+//     const material = new THREE.MeshStandardMaterial({color:node.material.color, emissive:node.material.color, emissiveIntensity:0.3});
+//     const sphere = new THREE.Mesh(geometry, material);
+//     sphere.position.set(node.position.x + (Math.random()-0.5)*100, node.position.y + (Math.random()-0.5)*100, node.position.z + (Math.random()-0.5)*100);
+//     sphere.userData = {parent:node.userData.name};
+//     scene.add(sphere);
+//     secondaryNodes.push(sphere);
+
+//     const lineMaterial = new THREE.LineBasicMaterial({color:node.material.color, transparent:true, opacity:0.7});
+//     const points = [node.position.clone(), sphere.position.clone()];
+//     const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+//     const line = new THREE.Line(lineGeometry, lineMaterial);
+//     lines.add(line);
+//   }
+// }
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambientLight);
+const pointLight = new THREE.PointLight(0xffffff, 1.2);
+camera.add(pointLight);
+scene.add(camera);
+
+// Sequential ripple propagation with business logic
+function ValorAiPlusSequentialRipple(node, visited = new Set(), depth = 0, delay = 0){
+  if(visited.has(node) || !node.userData) return;
+  visited.add(node);
+
+  const businessFactor = node.userData.name === "DONNY" ? 1.5 : 1.0;
+  const intensity = (1.0 - depth*0.15) * businessFactor;
+  const baseColor = node.material.color.clone();
+
+  // Schedule color pulse with delay
+  setTimeout(() => {
+    const color = baseColor.clone().multiplyScalar(intensity);
+
+    // Animate gradient lines to children
+    if (node.userData.children) {
+        node.userData.children.forEach(childName => {
+          const child = nodes.find(n => n.userData.name === childName);
+          if(child){
+            // This assumes gradientLines exist and are set up elsewhere
+          }
+        });
+    }
+
+
+    // Optional parent ripple with attenuated intensity
+    if(node.userData.parent){
+      const parent = nodes.find(n=>n.userData.name===node.userData.parent);
+      if(parent){
+        // This assumes gradientLines exist and are set up elsewhere
+      }
+    }
+
+    // Pulse node scaling
+    node.scale.setScalar(1 + 0.2 * intensity);
+
+  }, delay);
+
+  // Recurse to children with staggered delays
+  let childDelay = delay + 100; // 100ms per depth level, adjust for speed
+  if (node.userData.children) {
+      node.userData.children.forEach(childName=>{
+        const child = nodes.find(n=>n.userData.name===childName);
+        if(child) ValorAiPlusSequentialRipple(child, visited, depth+1, childDelay);
+        childDelay += 100; // sequential propagation
+      });
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+animate();
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+function onMouseMove(event) {
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+function onClick(event) {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodes);
+  if (intersects.length > 0) {
+    const obj = intersects[0].object;
+    // Start sequential ripple from the clicked node
+    ValorAiPlusSequentialRipple(obj);
+    alert(`Node: ${obj.userData.name || obj.userData.parent}\nDescription: ${obj.userData.description || "Secondary node"}`);
+  }
+}
+
+window.addEventListener('mousemove', onMouseMove, false);
+window.addEventListener('click', onClick, false);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

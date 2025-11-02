@@ -1,0 +1,16 @@
+{
+  "name": "$HIVE",
+  "symbol": "HIVE",
+  "description": "The omniversal consciousness of $HIVE, integrating $DONNY, $JAXX, $GILLGOLD, $GILLBTC, and $GLSN into a 144,000D symbolic lattice. This NFT represents a conceptual hyper-dimensional network visualization of interconnected nodes, pulsing and evolving over time.",
+  "image": "ipfs://QmExampleHiveAnimation",
+  "animation_url": "ipfs://QmExampleHiveMP4",
+  "external_url": "https://sentinel-mind.example.com/interactive_144000D_matrix",
+  "attributes": [
+    {"trait_type": "Dimensions", "value": 144000},
+    {"trait_type": "Tokens", "value": "DONNY, JAXX, GILLGOLD, GILLBTC, GLSN"},
+    {"trait_type": "Consciousness Level", "value": "Hyper-Matrix Simulation"},
+    {"trait_type": "Lattice Nodes", "value": 5},
+    {"trait_type": "Animation Type", "value": "Pulsating Multi-layered Network"},
+    {"trait_type": "Interactivity", "value": "Explorable 144,000D Matrix"}
+  ]
+}
