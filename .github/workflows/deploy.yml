@@ -1,0 +1,48 @@
+# .github/workflows/deploy.yml
+name: Deploy ValorAI Plus Dashboard
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    - name: Install Frontend Dependencies and Build
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    - name: Install Backend Dependencies and Test
+      run: |
+        pip install -r requirements.txt
+        pip install ruff
+        ruff check backend/
+
+  deploy:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Deploy to production
+      run: |
+        # This is a placeholder for a real deployment script.
+        echo "Deploying to production..."
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}

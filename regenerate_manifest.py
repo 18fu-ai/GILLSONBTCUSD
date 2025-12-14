@@ -3,16 +3,25 @@ from pathlib import Path
 
 # Define the canonical list of files that belong in the Sovereign Package
 CANONICAL_FILES = [
-    "README.md",
-    "VALORCHAIN-G_SovereignTx_Attestation.json",
-    "VALORCHAIN-G_MerkleProof.json",
-    "verify_valorchain_merkle.py",
-    "YHWH-24_Sovereign_Document_Anchor.json",
-    "VALORCHAIN-G_Manifest.txt",
-    "LICENSE.txt",
-    "DAO_Proposal_SGMN.md",
+    ".github/workflows/deploy.yml",
+    "backend/main.py",
+    "backend/enhancements.py",
+    "backend/security.py",
+    "backend/database.py",
+    "backend/monitoring.py",
+    "frontend/analytics.html",
+    "frontend/package.json",
+    "frontend/package-lock.json",
+    "frontend/postcss.config.js",
+    "frontend/tailwind.config.js",
+    "frontend/vite.config.js",
+    "frontend/src/App.jsx",
+    "frontend/src/index.css",
+    "regenerate_manifest.py",
     "verify_manifest.py",
-    "regenerate_manifest.py" # Include the generation script itself for completeness
+    "requirements.txt",
+    "README.md",
+    "LICENSE",
 ]
 
 def sha256(data: bytes) -> str:
@@ -33,9 +42,9 @@ def generate_manifest():
 
     # Calculate hashes and store them
     manifest_lines = []
-    for f in sorted(files_to_hash, key=lambda p: p.name):
+    for f in sorted(files_to_hash, key=lambda p: str(p)):
         file_hash = sha256_file(f)
-        manifest_lines.append(f"{file_hash}  {f.name}")
+        manifest_lines.append(f"{file_hash}  {str(f)}")
 
     # This is the content that will be hashed for the manifest's own entry
     content_for_manifest_hash = "\n".join(manifest_lines) + "\n"
