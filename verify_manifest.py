@@ -32,14 +32,16 @@ def main():
             line = line.strip()
             if not line:
                 continue
-            parts = line.split()
+            parts = line.split(maxsplit=1)
             if len(parts) < 2:
                 continue
-            hash_hex, fname = parts[0], parts[-1]
+            hash_hex, fname = parts[0], parts[1].strip()
             entries.append((hash_hex, fname))
 
     ok_all = True
     for expected_hash, fname in entries:
+        if fname == "MANIFEST_SHA256.txt":
+            continue
         fp = base / fname
         if not fp.exists():
             print(f"[MISSING] {fname}")
