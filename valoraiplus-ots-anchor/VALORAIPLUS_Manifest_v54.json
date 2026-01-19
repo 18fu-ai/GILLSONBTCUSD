@@ -1,11 +1,12 @@
 {
     "version": "v54.0.0",
     "schema": "VALORAI_SOVEREIGN_MANIFEST",
-    "merkle_root": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "merkle_root": "0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53",
     "leaves": [
-        "PTSD_CLAIMS_DATA",
-        "ADA_COMPLIANCE_LOGS",
-        "VALUATION_METRICS"
+        {"hash": "0xc89895315b74be9d1512f42a51f893043818e65879893d142173167b5790c58a"},
+        {"hash": "0xe658826d9c6e395562767078696b9983949a99738b584988775566332211aa00"},
+        {"hash": "0x11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff"},
+        {"hash": "0x3344556677889900aabbccddeeff11223344556677889900aabbccddeeff1122"}
     ],
-    "valuation_usd": 515962
+    "valuation_usd": 16890000000.00
 }

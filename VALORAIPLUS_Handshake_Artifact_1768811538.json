@@ -1,0 +1,24 @@
+{
+    "handshake": {
+        "schema": "VALORAIPLUS_PROOF_HANDSHAKE",
+        "version": "v55.0.1",
+        "authority": "DG77.77X-\u039e",
+        "node": "Saint Paul, MN",
+        "hub": "San Francisco, CA",
+        "leaf_index": 0,
+        "leaf_hash": "0xc89895315b74be9d1512f42a51f893043818e65879893d142173167b5790c58a",
+        "proof": [
+            "0xe658826d9c6e395562767078696b9983949a99738b584988775566332211aa00",
+            "0xca8cbcf171fc3d68e96335f6451e8ba90ddecdf5f123065a08844ad4268b2fd4"
+        ],
+        "merkle_root_keccak": "0xe77080d6add19288f218a36a75a6c9b1db680ed1242e3f1b2c1b1351a75032f6",
+        "anchor_root_sha256": "0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53",
+        "verification_rule": "Solidity/Foundry Compatible (Index Parity)",
+        "timestamp": "2026-01-19T08:32:18.211876Z",
+        "self_check": true
+    },
+    "anchors": {
+        "direct_keccak": "0xbbffb240154e17561afb1aeede072626a5c89a8da0d339018fc4db20dcc7703a",
+        "double_lock_btc": "0xf4e995b7991b380af4d271b7b20f22264ac741d39264812ce798f3e6bc9ba8ef"
+    }
+}
