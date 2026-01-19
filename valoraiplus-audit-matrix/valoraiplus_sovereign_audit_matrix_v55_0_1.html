@@ -1,67 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>VALORAIPLUS® Sovereign Audit Matrix v55.0.1</title>
-    <style>
-        body { background-color: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; border: 1px solid #00ff41; padding: 20px; box-shadow: 0 0 15px #00ff41; }
-        h1 { text-align: center; text-transform: uppercase; border-bottom: 1px dashed #00ff41; padding-bottom: 10px; }
-        .stat-box { display: flex; justify-content: space-between; margin: 20px 0; border: 1px solid #333; padding: 10px; }
-        .stat-label { font-weight: bold; color: #fff; }
-        .hash { word-break: break-all; color: #00ccff; }
-        .status { text-align: center; font-size: 1.5em; color: #ff00ff; margin-top: 30px; animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VALORAIPLUS® ©️ ™️ Sovereign Truth Matrix v55.0.1</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
+    body { background-color: #050000; color: #ff0033; font-family: 'JetBrains Mono', monospace; overflow: hidden; height: 100vh; }
+    .breach-glow { box-shadow: 0 0 100px rgba(255, 0, 51, 0.25); border: 2px solid rgba(255, 0, 51, 0.4); }
+    .terminal-bg { background: rgba(10, 0, 0, 0.98); }
+    .btn-truth { background: #ff0033; color: #000; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: 0.3s; }
+    .btn-truth:hover { background: #fff; box-shadow: 0 0 60px #ff0033; transform: scale(1.02); }
+    .ghost-3hz { animation: pulse-3hz 0.333s infinite; }
+    @keyframes pulse-3hz { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    input { background: #000; border: 1px solid #440000; color: #fff; padding: 1rem; border-radius: 1rem; width: 100%; outline: none; font-size: 11px; }
+    .log-entry { border-left: 2px solid #330000; padding-left: 10px; margin-bottom: 4px; }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <h1>VALORAIPLUS® Audit Terminal v55.0.1</h1>
 
-        <div class="stat-box">
-            <span class="stat-label">AUTHORITY NODE:</span>
-            <span>SAINT PAUL / SAN FRANCISCO HUB</span>
+<body class="flex items-center justify-center p-4">
+  <div class="w-full max-w-6xl terminal-bg rounded-[4rem] p-10 md:p-16 breach-glow relative">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-red-900/50 pb-8 mb-10">
+      <div>
+        <h1 class="text-6xl font-black italic tracking-tighter text-red-600 leading-none underline decoration-red-900/50">
+          VALORAIPLUS®
+        </h1>
+        <p class="text-[11px] uppercase tracking-[0.6em] text-red-900 font-extrabold mt-4">
+          JULES-READY TRUTH MATRIX v55.0.1 // 14D RESET
+        </p>
+      </div>
+
+      <div class="text-right">
+        <div class="flex items-center justify-end gap-3 mb-2">
+          <span class="text-[11px] text-zinc-600 uppercase tracking-widest font-black italic">Saint Paul Node</span>
+          <div class="w-4 h-4 rounded-full bg-red-600 ghost-3hz shadow-[0_0_15px_#ff0033]"></div>
+        </div>
+        <p class="text-sm font-bold text-white uppercase italic tracking-tighter">
+          DG77.77X-Ξ Authorized // SF HUB
+        </p>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div class="lg:col-span-5 space-y-8">
+        <div class="bg-red-950/10 p-8 rounded-[2.5rem] border border-red-900/30">
+          <div id="status" class="text-4xl font-black text-red-500 mb-2">STATUS: VAPOR</div>
+          <p id="deficit" class="text-[10px] text-zinc-500 font-mono italic">
+            Deficit: -20.00 ETH. Anchor Simulation drift detected.
+          </p>
+          <div id="live-bal" class="mt-4 text-xl font-bold text-white">SYNCING ASSETS...</div>
         </div>
 
-        <div class="stat-box">
-            <span class="stat-label">VALUATION (VERIFIED):</span>
-            <span style="color: #ffd700;">$16,890,000,000.00 USD</span>
+        <div class="space-y-4">
+          <label class="text-[10px] text-zinc-600 uppercase font-black">Submit Physical 20 ETH TXID</label>
+          <input type="text" id="tx-hash" placeholder="0x... [ENTER REAL TRANSACTION HASH]" />
+          <button id="btn-broadcast" class="w-full py-6 rounded-3xl btn-truth flex items-center justify-center gap-4">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+            Realize Anchor
+          </button>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-8">
+        <div id="terminal" class="h-96 bg-black/90 rounded-[2.5rem] p-8 border border-red-900/20 overflow-y-auto font-mono text-[10px] space-y-2">
+          <div class="text-red-900 log-entry">&gt; [00:33:00] BREACH ACKNOWLEDGED. 14D Core Hard Reset.</div>
+          <div class="text-zinc-600 log-entry">&gt; [INFO] Identity DG77.77X-Ξ verified. Hub SF-HUB active.</div>
+          <div class="text-white italic log-entry">&gt; [SYSTEM] AMath: Entering Zero-Knowledge Truth Realization.</div>
         </div>
 
-        <div class="stat-box" style="flex-direction: column;">
-            <span class="stat-label">REALITY ANCHOR (SHA-256):</span>
-            <span class="hash" id="anchor">LOADING...</span>
+        <div class="flex gap-4">
+          <button id="btn-sync" class="flex-1 py-4 rounded-2xl bg-zinc-950 text-zinc-500 font-black uppercase text-[9px] border border-zinc-800 hover:text-white flex items-center justify-center gap-2">
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+            Sync Ledger
+          </button>
+          <button id="btn-purge" class="flex-1 py-4 rounded-2xl bg-zinc-950 text-zinc-500 font-black uppercase text-[9px] border border-zinc-800 hover:text-red-600 flex items-center justify-center gap-2">
+            <i data-lucide="trash-2" class="w-3 h-3"></i>
+            Purge Drift
+          </button>
         </div>
-
-        <div class="stat-box" style="flex-direction: column;">
-            <span class="stat-label">MERKLE ROOT (KECCAK-256):</span>
-            <span class="hash" id="root">LOADING...</span>
-        </div>
-
-        <div class="stat-box" style="flex-direction: column;">
-            <span class="stat-label">HANDSHAKE PROOF (INDEX 1):</span>
-            <pre id="proof" style="color: #aaa; white-space: pre-wrap;">LOADING...</pre>
-        </div>
-
-        <div class="status" id="status">INITIALIZING...</div>
+      </div>
     </div>
 
-    <script>
-        async function loadMatrix() {
-            try {
-                const response = await fetch('handshake_artifact.json');
-                const data = await response.json();
+    <footer class="mt-12 pt-8 border-t border-red-900/20 flex justify-between items-center opacity-30">
+      <div class="text-[9px] text-zinc-800 font-black tracking-[0.5em] uppercase italic underline decoration-red-900">
+        Anchor: 408 384 1376
+      </div>
+      <div class="text-[11px] text-red-950 font-black italic tracking-tighter uppercase">
+        Mass Eternal achieved // DG77.77X-Ξ
+      </div>
+    </footer>
+  </div>
 
-                document.getElementById('anchor').innerText = data.anchor_reality_sha256;
-                document.getElementById('root').innerText = data.merkle_root_keccak;
-                document.getElementById('proof').innerText = JSON.stringify(data.handshake, null, 2);
-                document.getElementById('status').innerText = data.status;
-            } catch (e) {
-                document.getElementById('status').innerText = "CONNECTION FAILED: ARTIFACT MISSING";
-                document.getElementById('status').style.color = "red";
-            }
+  <script>
+    // Defensive: ensure libs are loaded before use
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
+
+    const term = document.getElementById("terminal");
+    const btnBroadcast = document.getElementById("btn-broadcast");
+    const txInput = document.getElementById("tx-hash");
+    const balEl = document.getElementById("live-bal");
+    const statusEl = document.getElementById("status");
+    const deficitEl = document.getElementById("deficit");
+
+    const ADDR = "0xD99629F91BC2E3A87199B01C38B964D2658AFFDB";
+    const RPC = "https://arb1.arbitrum.io/rpc";
+
+    const log = (m, cls = "text-zinc-500") => {
+      const d = document.createElement("div");
+      d.className = `log-entry ${cls}`;
+      d.innerHTML = `&gt; [${new Date().toLocaleTimeString()}] ${m}`;
+      term.appendChild(d);
+      term.scrollTop = term.scrollHeight;
+    };
+
+    const isTxHash = (h) => /^0x([A-Fa-f0-9]{64})$/.test(h);
+
+    async function checkBal() {
+      try {
+        if (!window.ethers) throw new Error("ethers not loaded");
+
+        const provider = new ethers.JsonRpcProvider(RPC);
+        const bal = await provider.getBalance(ADDR);
+        const ethStr = ethers.formatEther(bal);
+        const ethNum = Number(ethStr);
+
+        balEl.innerText = `${ethNum.toFixed(6)} ETH REALIZED`;
+        log(`On-Chain Telemetry: ${ethStr} ETH at ${ADDR.slice(0, 6)}…${ADDR.slice(-4)} (Arbitrum).`, "text-blue-400");
+
+        // Optional UI status flip
+        if (ethNum > 0) {
+          statusEl.textContent = "STATUS: LIVE";
+          statusEl.className = "text-4xl font-black text-green-500 mb-2";
+          deficitEl.textContent = "Anchor drift cleared. On-chain balance detected.";
+        } else {
+          statusEl.textContent = "STATUS: VAPOR";
+          statusEl.className = "text-4xl font-black text-red-500 mb-2";
         }
-        loadMatrix();
-    </script>
+      } catch (e) {
+        balEl.innerText = "SYNC FAILED";
+        log(`Sync Latency Detected: ${String(e?.message || e)}`, "text-red-600 font-black");
+      }
+    }
+
+    btnBroadcast.onclick = () => {
+      const h = txInput.value.trim();
+      if (!isTxHash(h)) {
+        log("REJECTION: Invalid TX hash format. Expected 0x + 64 hex chars.", "text-red-600 font-black");
+        return;
+      }
+
+      log(`TRANSMITTING TXID: ${h.slice(0, 18)}…${h.slice(-6)}`, "text-white font-bold");
+
+      // NOTE: This UI does NOT validate the tx on-chain (no explorer calls here).
+      // If you want real validation, add an RPC getTransactionReceipt() lookup.
+      setTimeout(() => {
+        log("AMath: TX accepted (format-valid). Run on-chain receipt check to confirm finality.", "text-green-500 font-black");
+      }, 900);
+    };
+
+    document.getElementById("btn-sync").onclick = checkBal;
+    document.getElementById("btn-purge").onclick = () => {
+      log("PURGING SIM-DRIFT...", "text-red-900 font-black");
+      setTimeout(() => log("CLEANROOM READY. Awaiting real liquidity.", "text-white"), 800);
+    };
+
+    window.addEventListener("load", () => {
+      setTimeout(checkBal, 700);
+    });
+  </script>
 </body>
 </html>
