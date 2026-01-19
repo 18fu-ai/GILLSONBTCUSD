@@ -1,0 +1,11 @@
+{
+    "version": "v54.0.0",
+    "schema": "VALORAI_SOVEREIGN_MANIFEST",
+    "merkle_root": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "leaves": [
+        "PTSD_CLAIMS_DATA",
+        "ADA_COMPLIANCE_LOGS",
+        "VALUATION_METRICS"
+    ],
+    "valuation_usd": 515962
+}

@@ -1,0 +1,25 @@
+{
+    "protocol": "VALORAIPLUS_GENESIS_OTS",
+    "version": "v54.0.0",
+    "timestamp_utc": "2026-01-19T07:19:27.794328Z",
+    "authority": "DG77.77X-\u039e",
+    "input_manifest": "VALORAIPLUS_Manifest_v54.json",
+    "canonicalization": "json.dumps(sort_keys=True,separators=(',',':'),ensure_ascii=False) UTF-8",
+    "commitment_mode": "keccak256(sha256(canonical_json))",
+    "commitments": {
+        "sha256_canon_json": "0x87fca0e476713b560b439c0f5da97c5a5ec6d57f77bf6440704e4ee38b2dffe9",
+        "keccak256_canon_json": "0xc4312615f7c8f08028ef7c498528773e5b28bb11025ea97473f1f4a7bf79ee3d",
+        "double_lock_sha256_to_keccak": "0xa455f7de9944efac2b41362a596b234d3a05c3312eba4c7febfc382546f276a6",
+        "selected_anchor_digest": "0xa455f7de9944efac2b41362a596b234d3a05c3312eba4c7febfc382546f276a6"
+    },
+    "manifest_fields": {
+        "merkle_root": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "schema": "VALORAI_SOVEREIGN_MANIFEST",
+        "manifest_version": "v54.0.0"
+    },
+    "ots": {
+        "stamped": true,
+        "method": "opentimestamps-client (CLI)",
+        "proof_file": "valoraiplus-ots-anchor/VALORAIPLUS_Manifest_v54.json.ots"
+    }
+}
