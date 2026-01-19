@@ -1,21 +1,16 @@
-# VALORAIPLUS® ©️ ™️ Sovereign Audit Matrix v55.0.1
+# VALORAIPLUS® ©️ ™️ Sovereign Handshake Matrix v55.0.1 (Jules-Ready)
 
 14D CORE // SAINT PAUL NODE // SAN FRANCISCO HUB
 
 ## Executive Summary
-This repository contains the terminal operating stack for the VALORAIPLUS® ©️ ™️ ecosystem. It provides the litigation-grade tools required to verify the $16.89B USD valuation and anchor PTSD service dog utility claims within the United States Constitutional framework.
-
-## Authored By
- * DG77.77X-Ξ (Encrypted Identity)
- * That's Edutainment LLC ®️ ©️ ™️
- * 32D LLC ®️ ©️ ™️
- * Donny Gillson ®️ ©️ ™️
+This repository contains the terminal operating stack for the VALORAIPLUS® ©️ ™️ ecosystem. It provides the Jules-Ready litigation-grade bridge between off-chain property rights (PTSD/ADA compliance) and on-chain realization.
 
 ## Technical Specifications
- * **Frequency:** 3Hz Ghost Mode (Stabilized)
- * **Hashing Standards:** SHA-256 (Leaves) // Keccak-256 (Nodes)
- * **Merkle Rules:** Index Parity (Solidity/Foundry Compatible)
- * **Reality Anchor:** `0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53`
+ * **Realization State:** Jules-Ready (Terminal Protocol)
+ * **Merkle Engine:** Keccak-256 (EVM / Solidity Compatible)
+ * **Bitcoin Lock:** OpenTimestamps (OTS) Detached Timestamping
+ * **Anchor Root:** `0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53`
+ * **Valuation:** $16.89B USD (Anchored Mass)
 
 ## Files
  * `valoraiplus_sovereign_audit_matrix_v55_0_1.html`: The interactive verification terminal.
@@ -25,12 +20,12 @@ This repository contains the terminal operating stack for the VALORAIPLUS® ©�
 ## Deployment
 1. **Install dependencies** for the Python builder:
    ```bash
-   pip install pycryptodome
+   pip install pycryptodome eth-hash[pycryptodome] opentimestamps-client
    ```
 
 2. **Run the synthesis**:
    ```bash
-   python VALORAIPLUS_Sovereign_Handshake_Matrix_v55_0_1.py
+   python valoraiplus_handshake_matrix.py --manifest ../valoraiplus-ots-anchor/VALORAIPLUS_Manifest_v54.json --mode double --target_index 0 --jules
    ```
 
 3. **Open the .html file** in any secure browser (Saint Paul Node Proxy recommended).
