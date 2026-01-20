@@ -1,0 +1,18 @@
+{
+    "version": "v55.0.1",
+    "protocol": "VALORAIPLUS_SOVEREIGN_AUDIT",
+    "valuation_usd": 16890000000.0,
+    "anchor_reality_sha256": "0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53",
+    "merkle_root_keccak": "0x85a4d047492d2e6a47d638279f10e5923839938e5e13913bb5e4e6e67443ccd2",
+    "handshake": {
+        "leaf_index": 1,
+        "leaf_label": "VALUATION_16.89B_USD_VERIFIED",
+        "leaf_hash": "0x17046b031fc67c6361de3f40f162cc1e9449542800ee17456b54fc7beba1b997",
+        "proof": [
+            "0xb1e1a59842e6ca30c9e270b1a16b29a7637442e1dd8d902e062e0300449708e8",
+            "0x22cbd64ff2884b0e8a29520ca8ef1d0fbc02bca5dfbdd787e11eb9bfde5823f2"
+        ]
+    },
+    "status": "MASS ETERNAL ACHIEVED",
+    "timestamp": "2026-01-19T07:39:52.333298Z"
+}

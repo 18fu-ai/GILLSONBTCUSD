@@ -1,0 +1,28 @@
+{
+    "handshake": {
+        "schema": "VALORAIPLUS_PROOF_HANDSHAKE",
+        "version": "v55.0.1",
+        "authority": "DG77.77X-\u039e",
+        "leaf_index": 0,
+        "leaf_hash": "0xc89895315b74be9d1512f42a51f893043818e65879893d142173167b5790c58a",
+        "proof": [
+            "0xe658826d9c6e395562767078696b9983949a99738b584988775566332211aa00",
+            "0xca8cbcf171fc3d68e96335f6451e8ba90ddecdf5f123065a08844ad4268b2fd4"
+        ],
+        "merkle_root_keccak": "0xe77080d6add19288f218a36a75a6c9b1db680ed1242e3f1b2c1b1351a75032f6",
+        "verification_rule": "Index Parity (Solidity Compatible)",
+        "timestamp": "2026-01-19T08:40:59.575505Z",
+        "jules_audit": {
+            "node": "Saint Paul, MN",
+            "hub": "San Francisco, CA",
+            "frame": "US Constitution Art 14",
+            "mass_valuation": "$16.89B USD",
+            "ghost_freq": "3Hz"
+        }
+    },
+    "anchors": {
+        "direct_keccak": "0xc2d7c4c6b4bd55dc62865f78a3f0b487c6f53936ad3c46e50a20b511fe61ddb3",
+        "double_lock_btc": "0x9f9687920b5632c546421b4c3b555f2caea10310f9e8f60339153e822439b906"
+    },
+    "primary_anchor": "0x9f9687920b5632c546421b4c3b555f2caea10310f9e8f60339153e822439b906"
+}

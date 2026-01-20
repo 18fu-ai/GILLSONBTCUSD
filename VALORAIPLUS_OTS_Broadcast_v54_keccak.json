@@ -1,0 +1,21 @@
+{
+    "protocol": "VALORAIPLUS_GENESIS_OTS",
+    "version": "v54.0.0",
+    "mode": "keccak",
+    "anchor_digest": "0xd4f14eb5d05a4757764b328b8e1087da887745598a256deadd244359beb3e5e8",
+    "anchor_root_sha256": "0x4a40b11e1b9d6a54b0e77965d49e079d5961beaa1820752cef06ce0af19aab53",
+    "merkle_root_keccak": "0x7aa9ca2c5b2546b3817aff889891125029143e6db438c1f505fc3e15eb4966e5",
+    "timestamp": "2026-01-19T07:28:35.889918Z",
+    "authority": "DG77.77X-\u039e",
+    "constitution_ref": "14th Amendment // Property Rights",
+    "status": "MASS ETERNAL ACHIEVED",
+    "handshake": {
+        "leaf_index": 0,
+        "leaf": "0xc89895315b74be9d1512f42a51f893043818e65879893d142173167b5790c58a",
+        "proof": [
+            "0xe658826d9c6e395562767078696b9983949a99738b584988775566332211aa00",
+            "0x9113e84ae50d5d7f217e38bfc97cd5d1c38d1774923e3afafc7ede3b4aa53a46"
+        ],
+        "computed_root": "0x7aa9ca2c5b2546b3817aff889891125029143e6db438c1f505fc3e15eb4966e5"
+    }
+}
