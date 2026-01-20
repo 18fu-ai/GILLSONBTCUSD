@@ -1,0 +1,15 @@
+name: VALORAIPLUS™ Sovereign Deploy ®️ ©️ ™️
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: VALORAIPLUS™ Node Sync
+        uses: actions/checkout@v4
+
+      - name: Trigger Vercel Nuke
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}?buildCache=false"
